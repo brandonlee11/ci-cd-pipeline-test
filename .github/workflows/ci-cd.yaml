@@ -16,14 +16,14 @@ jobs:
       - name: Build Docker Container Image
         run: docker build -t backend-service:latest ./pipeline
 
-      - name: Run Conatiner in Detached Mode
+      - name: Run Container in Detached Mode
         run: docker run -d -p 3000:3000 -e NODE_ENV=production --name test-container backend-service:latest
 
-      - name: Verify  Environment Connection and Health Endpoint
+      - name: Verify Environment Connection and Health Endpoint
         run: |
           sleep 3
           response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/health)
-          echo "Health endpoint returned HTTP status : $response"
+          echo "Health endpoint returned HTTP status: $response"
           if [ "$response" != "200" ]; then
             echo "Endpoint verification failed!"
             exit 1
@@ -32,4 +32,4 @@ jobs:
 
       - name: Stop and Clean Container
         if: always()
-        run: docker stop test-container && docker rm test-container
+        run: docker rm -f test-container || true
